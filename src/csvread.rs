@@ -6,10 +6,12 @@ use rand::thread_rng;
 use std::error::Error;
 use std::fmt;
 use std::process;
+#[derive(Clone)]
+//this is where I create the Student struct to shove all of the values from the csv into and read out the csv
 
 pub struct Student {
     pub id: i32,
-    pub gender: String,
+    pub gender: f32,
     pub age: f32,
     pub city: String,
     pub profession: String,
@@ -28,7 +30,15 @@ pub struct Student {
     pub depression: f32,
 }
 
-pub fn parse_sleep_duration(s: &str) -> f32 {
+pub fn parse_gender(s: &str) -> f32 { //these are all just to turn the entries in the csv into floats if they have something other than numerical values
+    match s.trim().to_lowercase().as_str() {
+        "Male" => 1.0,
+        "Female" => 0.0,
+        _ => 0.5
+    }
+}
+
+pub fn parse_sleep_duration(s: &str) -> f32 { 
     match s.trim().to_lowercase().as_str() {
         "'less than 5 hours'" => 4.5,
         "'5-6 hours'" => 5.5,
@@ -48,7 +58,7 @@ pub fn parse_dietary_habits(s: &str) -> f32 {
     }
 }
 
-pub fn parse_fam_history(s: &str) -> f32 {
+pub fn parse_fam_history(s: &str) -> f32 { //this and the next one are the same. I should've just generalized it into a simple "parse_yes_no" but it works so I'm not touching it anymore
     match s.trim().to_lowercase().as_str() {
         "Yes" => 1.0,
         "No" => 0.0,
@@ -56,7 +66,7 @@ pub fn parse_fam_history(s: &str) -> f32 {
     }
 }
 
-pub fn parse_suicidethoughts(s: &str) -> f32 {
+pub fn parse_suicidethoughts(s: &str) -> f32 { 
     match s.trim().to_lowercase().as_str() {
         "Yes" => 1.0,
         "No" => 0.0,
@@ -80,9 +90,9 @@ pub fn csvread(path: &str) -> Result<Vec<Student>, Box<dyn Error>> {
 
         let student = Student{
             id: r[0].parse().unwrap_or(0),
-            gender: r[1].to_string(), //not using this
+            gender: parse_gender(&r[1]), //not using this
             age: r[2].parse().unwrap_or(0.0),
-            city: r[3].to_string(), //not using this either
+            city: r[3].to_string(), //not using
             profession: r[4].to_string(), //or this
             academic_pressure: r[5].parse().unwrap_or(0.0),
             work_pressure: r[6].parse().unwrap_or(0.0),
@@ -104,6 +114,5 @@ pub fn csvread(path: &str) -> Result<Vec<Student>, Box<dyn Error>> {
     Ok(data)
 
 
-
-
 }
+
